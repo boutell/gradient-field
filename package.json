@@ -6,8 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "BoDonkey",
+  "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.21",
     "tinycolor2": "^1.4.2",
