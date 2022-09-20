@@ -75,7 +75,6 @@ export default {
         colorString = `${colorString}, ${value}`;
       };
       colorString = colorString + ')';
-      console.log(colorString);
       return colorString;
     },
     addLimit() {
@@ -94,7 +93,6 @@ export default {
   watch: {
     schemaInput: {
       handler(newValue, oldValue) {
-        console.log('testing', this.schemaInput.data);
         this.next = this.schemaInput.data;
       },
       deep: true
@@ -113,7 +111,6 @@ export default {
       }
     },
     getNext() {
-      console.log(this.value);
       return this.value.data ? this.value.data : (this.field.def || {});
     },
     parseSchema(next) {
@@ -130,6 +127,7 @@ export default {
         }
       ];
       if (Object.keys(next).length < 2) {
+        
         return defaultSchema;
       } else {
         const returnedSchema = [];
@@ -157,7 +155,6 @@ export default {
       this.schema.push(newSchema);
     },
     removeColor() {
-      console.log('in remove', this.schema);
       this.schema.pop();
     }
   }

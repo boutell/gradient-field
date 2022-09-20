@@ -41,13 +41,17 @@ modules: {
 }
 ```
 
-Next, you can add it to any page as an Editor option.
+Next, you can add it to any page as an Editor option. In addition to a `label` you can also add a `def` property with an object composed of two properties, `colorone` and `colortwo`. These keys take hex colors with alpha and will set the colors that initially populate the picker.
 ```javascript
 // modules/custom-page/index.js
 ...
 'background-color': {
     type: 'gradientPicker',
-    label: 'Background Gradient Picker'
+    label: 'Background Gradient Picker',
+    def: {
+      colorone: '#4a90e2ff',
+      colortwo: '#d61f1fff'
+      }
   }
 ...
 ```

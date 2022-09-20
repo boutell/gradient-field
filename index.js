@@ -18,7 +18,6 @@ module.exports = {
         });
       },
       async convert(req, field, data, object) {
-        console.log('in convert', data[field.name]);
         const input = data[field.name];
 
         // Check it is the right type of data
@@ -53,7 +52,6 @@ module.exports = {
           colorString = `${colorString}, ${value}`;
         };
         colorString = colorString + ')';
-        console.log(colorString);
         return colorString;
       }
     };
