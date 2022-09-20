@@ -25,7 +25,7 @@ This module will add a new `gradientPicker` field type to your project. It will 
 To install the module, use the command line to run this command in an Apostrophe project's root directory:
 
 ```
-npm install 
+npm install https://github.com/BoDonkey/gradient-field.git
 ```
 
 ## Usage
