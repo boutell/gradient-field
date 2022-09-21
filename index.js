@@ -1,4 +1,4 @@
-const _ = require('lodash')
+const _ = require('lodash');
 const tinycolor = require('tinycolor2');
 
 module.exports = {
@@ -22,35 +22,40 @@ module.exports = {
 
         // Check it is the right type of data
         if (typeof input !== 'object') {
-          throw self.apos.error('malformed');
+          throw self.apos.error('Data object is malformed');
         }
 
         // Check if required and present
-        if (field.required && (_.isUndefined(input) || Object.keys(input).length >= 2)) {
+        if (
+          field.required &&
+          (_.isUndefined(input) || Object.keys(input).length < 3)
+        ) {
           throw self.apos.error('required');
-        }
+        };
 
-        // Launder each color
-        Object.keys(input).forEach(function(key) {
-          input[key] = self.apos.launder.string(input[key]);
-        }
-        );
-
-        // Make sure each value is a valid color value
+        // Make sure each value is a valid
         for (const [key, value] of Object.entries(input)) {
-          const test = tinycolor(value);
-          if (!tinycolor(test).isValid()) {
-            throw self.apos.error('not color string');
+          if (key === 'gradientangle') {
+            if (!Number.isInteger(value) || value > 360 || value < 0) {
+              throw self.apos.error('Improper range value');
+            }
+          } else {
+            const test = tinycolor(value);
+            if (!tinycolor(test).isValid()) {
+              throw self.apos.error('Not a color string');
+            }
           }
-        }
+        };
 
         object[field.name] = input;
       },
       makeGradient(colorData) {
-        let colorString = 'linear-gradient(45deg';
-        for (const [key, value] of Object.entries(colorData)) {
+        const _data = {...colorData};
+        let colorString = `linear-gradient(${_data.gradientangle}deg`;
+        delete _data.gradientangle;
+        Object.values(_data).forEach((values) => {
           colorString = `${colorString}, ${value}`;
-        };
+        });
         colorString = colorString + ')';
         return colorString;
       }

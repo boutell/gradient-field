@@ -18,7 +18,7 @@
   </p>
 </div>
 
-This module will add a new `gradientPicker` field type to your project. It will allow the Editor to select up to 10 colors to be added to a linear gradient. It also creates a new Nunjucks filter to apply the colors in your template.
+This module will add a new `gradientPicker` field type to your project. It will allow the Editor to select up to 10 colors to be added to a linear gradient. For the moment, it only takes direction in degrees. It also creates a new Nunjucks filter to apply the colors in your template.
 
 ## Installation
 
@@ -30,7 +30,7 @@ npm install https://github.com/BoDonkey/gradient-field.git
 
 ## Usage
 
-Once the module is installed, you will first need to add it to your `app.js` file. 
+Once the module is installed, you will need to add it to your `app.js` file. 
 
 ```javascript
 ...
@@ -41,7 +41,7 @@ modules: {
 }
 ```
 
-Next, you can add it to any page as an Editor option. In addition to a `label` you can also add a `def` property with an object composed of two properties, `colorone` and `colortwo`. These keys take hex colors with alpha and will set the colors that initially populate the picker.
+Next, you can add it to any page as an Editor option. In addition to a `label`, you can also add default values through the `def` property with an object composed of three properties, `gradientangle`, `colorone`, and `colortwo`. The first takes an integer for the gradient angle. These keys take hex colors with alpha and will set the colors that initially populate the picker.
 ```javascript
 // modules/custom-page/index.js
 ...
@@ -49,6 +49,7 @@ Next, you can add it to any page as an Editor option. In addition to a `label` y
     type: 'gradientPicker',
     label: 'Background Gradient Picker',
     def: {
+      gradientangle: 90,
       colorone: '#4a90e2ff',
       colortwo: '#d61f1fff'
       }
