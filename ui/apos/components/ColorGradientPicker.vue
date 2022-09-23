@@ -112,6 +112,7 @@ export default {
       }
     },
     getNext() {
+      console.log(this.value.data);
       return this.value ? this.value.data : (this.field.def || {});
     },
     parseSchema(next) {
