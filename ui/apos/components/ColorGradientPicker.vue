@@ -47,6 +47,7 @@ export default {
   },
   data() {
     const next = this.getNext();
+    console.log('next', next);
     const parsedSchema = this.parseSchema(next);
     return {
       schema: parsedSchema,
@@ -59,6 +60,7 @@ export default {
   computed: {
     gradient() {
       const _data = { ...this.schemaInput.data };
+      console.log('_data', _data);
       let colorString = `linear-gradient(${_data.gradientangle}deg`;
       delete _data.gradientangle;
       Object.values(_data).forEach(value => {
