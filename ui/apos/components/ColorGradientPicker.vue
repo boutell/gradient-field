@@ -96,6 +96,7 @@ export default {
   },
   watch: {
     schemaInput() {
+      console.log('schemainput', this.schemaInput.data);
       this.next = this.schemaInput.data;
     },
     generation() {
