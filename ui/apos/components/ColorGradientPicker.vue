@@ -16,6 +16,12 @@
             :utility-rail="false" :generation="generation"
             />
           </div>
+          <div>
+            <AposSchema
+            :schema="schematwo" v-model="schemaInput" :trigger-validation="triggerValidation"
+            :utility-rail="false" :generation="generation"
+            />
+          </div>
           <footer class="apos-link-control__footer">
             <AposButton type="button" label="+" :disabled="addLimit" @click="addColor" />
             <AposButton type="button" label="-" :disabled="removeLimit" @click="removeColor" />
@@ -51,6 +57,12 @@ export default {
     const parsedSchema = this.parseSchema(next);
     return {
       schema: parsedSchema,
+      schematwo: [
+        {
+          name: 'test',
+          type: 'range'
+        }
+      ],
       schemaInput: {
         data: next
       },
