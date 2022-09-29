@@ -1,30 +1,43 @@
 <template>
-  <AposInputWrapper
-    :field="field"
-    :error="null"
-    :uid="uid"
-    :display-options="displayOptions"
-    :modifiers="modifiers"
-  >
+  <AposInputWrapper :field="field" :error="null" :uid="uid" :display-options="displayOptions" :modifiers="modifiers"
+    :value="value">
     <template #body>
       <div class="apos-input-object">
         <div class="apos-input-wrapper">
           <div id="color-square" :style="{ background: gradient }" />
           <div>
-            <AposSchema
-            :schema="schema" v-model="schemaInput" :trigger-validation="triggerValidation"
-            :utility-rail="false" :generation="generation"
-            />
+            <AposInputRange :field="{
+              name: 'angle',
+              label: 'Gradient Angle',
+              min: 0,
+              max: 360,
+              unit: 'deg',
+              def: 90
+            }" v-model="angleValue" :conditionMet="true" />
           </div>
           <div>
-            <AposSchema
-            :schema="schematwo" v-model="schemaInput" :trigger-validation="triggerValidation"
-            :utility-rail="false" :generation="generation"
-            />
+            <ul>
+              <h3>Colors</h3>
+              <li v-for="(color, index) in colors">
+                <!-- This <p> is just temporary for debugging-->
+                <p>{{ color }}</p>
+                <AposSchema :schema="colorSchema" v-model="colorsValue" :trigger-validation="triggerValidation"
+                :utility-rail="false" :generation="generation"
+                :key="index" />
+                <div>
+                  <span>
+                <button @click="moveUp" :disabled="atLimit">Up</button>
+                <button @click="moveDown" :disabled="atLimit">Down</button>
+                </span>
+                <span class="span-right">
+                  <button @click="removeColor(index)">Trash</button>
+                </span>
+                </div>
+              </li>
+            </ul>
           </div>
           <footer class="apos-link-control__footer">
-            <AposButton type="button" label="+" :disabled="addLimit" @click="addColor" />
-            <AposButton type="button" label="-" :disabled="removeLimit" @click="removeColor" />
+            <AposButton type="button" label="+" @click="addColor" />
           </footer>
         </div>
       </div>
@@ -33,15 +46,18 @@
 </template>
 
 <script>
+
 import AposInputMixin from 'Modules/@apostrophecms/schema/mixins/AposInputMixin';
 import AposInputWrapper from 'Modules/@apostrophecms/schema/components/AposInputWrapper.vue';
+import AposButton from 'apostrophe/modules/@apostrophecms/ui/ui/apos/components/AposButton.vue';
 
 export default {
   name: 'ColorGradientPicker',
   components: {
-    AposInputWrapper
-  },
-  mixins: [ AposInputMixin ],
+    AposInputWrapper,
+    AposButton
+},
+  mixins: [AposInputMixin],
   props: {
     generation: {
       type: Number,
@@ -53,131 +69,106 @@ export default {
   },
   data() {
     const next = this.getNext();
-    console.log('next', next);
-    const parsedSchema = this.parseSchema(next);
     return {
-      schema: parsedSchema,
-      schematwo: [
+      colorSchema: [
         {
-          name: 'test',
-          type: 'range'
+          name: 'color',
+          type: 'color'
         }
       ],
-      schemaInput: {
-        data: next
+      colorsValue: {
+        data: next.colors
       },
-      next
+      angleValue: {
+        data: next.angle
+      },
+      next,
+      colors: next.colors
     };
   },
   computed: {
     gradient() {
-      const _data = { ...this.schemaInput.data };
-      console.log('_data', _data);
-      let colorString = `linear-gradient(${_data.gradientangle}deg`;
-      delete _data.gradientangle;
-      Object.values(_data).forEach(value => {
-        colorString = `${colorString}, ${value}`;
-      });
-      colorString = colorString + ')';
-      return colorString;
+      // holder until final data structure
+      return 'linear-gradient(45deg, #e66465, #9198e5)';
     },
-    addLimit() {
-      if (this.schema.length === 10) {
-        return true;
-      }
-      return false;
-    },
-    removeLimit() {
-      if (this.schema.length < 3) {
-        return true;
-      }
+    atLimit() {
+      // disable buttons for the top or the bottom - need multiple functions?
+      console.log('TBD');
       return false;
     }
   },
   watch: {
-    schemaInput() {
-      console.log('schemainput', this.schemaInput.data);
-      this.next = this.schemaInput.data;
+    angleValue() {
+      this.next = {
+        ...this.next,
+        angle: this.angleValue.data
+      }
+    },
+    colorsValue() {
+      const newColorArray = this.setColorArray();
+      const colorsLength = this.next.colorsLength;
+      // spreading colorValue additionally to get error checking
+      this.next = {
+        ...this.next,
+        ...this.colorValue,
+        colors: newColorArray,
+        colorsLength: colorsLength
+      }
     },
     generation() {
       this.next = this.getNext();
-      this.schemaInput = {
+      this.colorsValue = {
         data: this.next
       };
     }
   },
   methods: {
     validate(value) {
-      if (this.schemaInput.hasErrors) {
-        return 'invalid';
-      }
+      return false;
     },
     getNext() {
-      console.log(this.value.data);
-      return this.value ? this.value.data : (this.field.def || {});
+      return this.value.data ? this.value.data : (this.field.def || {
+        angle: 90,
+        colors: [
+          { data: {color: '#4a90e2ff'}}
+        ],
+        colorsLength: 1
+      });
     },
-    parseSchema(next) {
-      const defaultSchema = [
+    setColorArray() {
+      const newColor = this.colorsValue.data;
+      const newColorObject = {data:newColor};
+      let newArray = [...this.next.colors];
+      newArray.pop();
+      // returning the array with push didn't work, but...
+      newArray.push(newColorObject);
+      return newArray
+    },
+    getColorSchema() {
+      const returnedSchema = [
         {
-          name: 'gradientangle',
-          label: 'Gradient Angle',
-          type: 'range',
-          min: 0,
-          max: 360,
-          unit: 'deg'
-        },
-        {
-          name: 'colorone',
-          label: 'Color One',
-          type: 'color'
-        },
-        {
-          name: 'colortwo',
-          label: 'Color Two',
+          name: 'color',
           type: 'color'
         }
       ];
-      if (Object.keys(next).length < 4) {
-        return defaultSchema;
-      } else {
-        const returnedSchema = [];
-        for (const [key, value] of Object.entries(next)) {
-          if (key === 'gradientangle') {
-            const field = {
-              name: 'gradientangle',
-              label: 'Gradient Angle',
-              type: 'range',
-              min: 0,
-              max: 360,
-              unit: 'deg'
-            };
-            returnedSchema.push(field);
-          } else {
-            let number = key.split('color')[1];
-            number = number.charAt(0).toUpperCase() + number.slice(1);
-            let field = {
-              name: key,
-              label: `Color ${number}`,
-              type: 'color'
-            };
-            returnedSchema.push(field);
-          };
-        }
-        return returnedSchema;
-      }
+      return returnedSchema;
     },
     addColor() {
-      const fieldNumbers = [ 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten' ];
-      const currentField = this.schema.length;
-      const newSchema = {
-        name: `color${fieldNumbers[currentField].toLowerCase()}`,
-        label: `Color ${fieldNumbers[currentField]}`,
-        type: 'color'
-      };
-      this.schema.push(newSchema);
+      this.next.colors.push({data: {color: '#00ff00ff'}});
+      this.next.colorsLength++;
     },
-    removeColor() {
-      this.schema.pop();
+    moveUp() {
+      // need to pass a key and rearrange colors array? or...?
+      console.log('TBD');
+    },
+    moveDown() {
+      // need to pass a key and rearrange colors array? or...?
+      console.log('TBD');
+    },
+    removeColor(index) {
+      // need to pass a key and delete from array? or...?
+      console.log('TBD');
+      console.log('index',index);
     }
   }
 };
@@ -203,5 +194,9 @@ li {
 
 .apos-input-object ::v-deep .apos-schema .apos-field {
   margin-bottom: 30px;
+}
+
+.span-right {
+  float: right;
 }
 </style>
