@@ -9,8 +9,7 @@
   "author": "BoDonkey",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.21",
-    "tinycolor2": "^1.4.2",
-    "vue": "^3.2.39"
+    "cuid": "^2.1.8",
+    "tinycolor2": "^1.4.2"
   }
 }

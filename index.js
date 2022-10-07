@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const tinycolor = require('tinycolor2');
 
 module.exports = {
@@ -28,36 +27,30 @@ module.exports = {
         // Check if required and present
         if (
           field.required &&
-          (_.isUndefined(input) || Object.keys(input).length < 3)
+          (input == null)
         ) {
           throw self.apos.error('required');
         };
 
-        // Make sure each value is a valid
-        for (const [key, value] of Object.entries(input)) {
-          if (key === 'gradientangle') {
-            if (!Number.isInteger(value) || value > 360 || value < 0) {
-              throw self.apos.error('Improper range value');
-            }
-          } else {
-            const test = tinycolor(value);
-            if (!tinycolor(test).isValid()) {
-              throw self.apos.error('Not a color string');
-            }
+        const result = {};
+        if (!Number.isInteger(input.angle) || input.angle > 360 || input.angle < 0) {
+          throw self.apos.error('invalid', 'gradient angle has invalid value');
+        }
+        result.angle = input.angle;
+        if (!Array.isArray(input.colors)) {
+          throw self.apos.error('invalid', 'colors is not an array');
+        }
+        result.colors = input.colors.map(value => {
+          const test = tinycolor(value);
+          if (!tinycolor(test).isValid()) {
+            throw self.apos.error('Not a color string');
           }
-        };
-
-        object[field.name] = input;
-      },
-      makeGradient(colorData) {
-        const _data = {...colorData};
-        let colorString = `linear-gradient(${_data.gradientangle}deg`;
-        delete _data.gradientangle;
-        Object.values(_data).forEach((values) => {
-          colorString = `${colorString}, ${value}`;
+          return value;
         });
-        colorString = colorString + ')';
-        return colorString;
+        object[field.name] = result;
+      },
+      makeGradient(value) {
+        return `linear-gradient(${value.angle}deg, ${value.colors.join(', ')})`;
       }
     };
   }

@@ -23,7 +23,8 @@ modules: {
 }
 ```
 
-Next, you can add it to any page as an Editor option. In addition to a `label`, you can also add default values through the `def` property with an object composed of three properties, `gradientangle`, `colorone`, and `colortwo`. The first takes an integer for the gradient angle. These keys take hex colors with alpha and will set the colors that initially populate the picker.
+Next, you can add it to any page as an Editor option. In addition to a `label`, you can also add default values through the `def` property with an object containing `angle` and `colors` properties. `angle` should be an integer angle in degrees, and `colors` should be an array of valid HTML color strings, like `#ffffff`. The color string may optionally include alpha channel as well. These set the colors that initially populate the picker.
+
 ```javascript
 // modules/custom-page/index.js
 ...
@@ -31,10 +32,9 @@ Next, you can add it to any page as an Editor option. In addition to a `label`, 
     type: 'gradientPicker',
     label: 'Background Gradient Picker',
     def: {
-      gradientangle: 90,
-      colorone: '#4a90e2ff',
-      colortwo: '#d61f1fff'
-      }
+      angle: 90,
+      colors: [ '#4a90e2ff', '#d61f1fff' ]
+    }
   }
 ...
 ```
