@@ -158,19 +158,6 @@ export default {
         colors: [ defColor ]
       });
     },
-    setColorArray() {
-      const newColor = this.colorsValue.data;
-      const newColorObject = {data:newColor};
-      let newArray = [...this.next.colors];
-      newArray.pop();
-      // returning the array with push didn't work, but...
-      newArray.push(newColorObject);
-      return newArray
-    },
-    addColor() {
-      this.next.colors.push({data: {color: '#00ff00ff'}});
-      this.next.colorsLength++;
-    },
     disableMoveUp(id) {
       const index = this.colors.findIndex(color => color.id === id);
       return index === 0;
